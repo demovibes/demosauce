@@ -25,8 +25,8 @@ static const char* HELP_MESSAGE =
     "   -h                      print help\n"
     "   -c file.conf            config file\n"
     "\n"
-    "debug options\n"       
-#ifdef __GLIBC__                
+    "debug options\n"
+#ifdef __GLIBC__
     "   -t                      trace malloc, see 'man 3 mtrace'\n"
 #endif
     "   -d kv-set               debug song, set of key-value pairs";
@@ -55,8 +55,8 @@ static void strip_comments(char* str)
 
 static void read_config(void)
 {
-    FILE* f = fopen(config_file_name, "r"); 
-    if (!f) 
+    FILE* f = fopen(config_file_name, "r");
+    if (!f)
         die("cat't read config file");
 
     fseek(f, 0, SEEK_END);
@@ -66,7 +66,7 @@ static void read_config(void)
     if (fread(buf, 1, bsize, f) != bsize)
         goto exit;
     strip_comments(buf);
-    
+
     char tmpstr[8] = {0};
     #define GET_int(key, value) settings_##key = keyval_int(buf, #key, settings_##key);
     #define GET_str(key, value) settings_##key = keyval_str_dup(buf, #key, settings_##key);
@@ -86,10 +86,10 @@ static void check_sanity(void)
     if (settings_config_version != 34)
         die("config file seems to be outdated, need config_version 34");
 
-    if (settings_demovibes_port < 1 || settings_demovibes_port > 65535) 
+    if (settings_demovibes_port < 1 || settings_demovibes_port > 65535)
         die("setting demovibes_port out of range (1-65535)");
 
-    if (settings_encoder_samplerate <  8000 || settings_encoder_samplerate > 192000) 
+    if (settings_encoder_samplerate <  8000 || settings_encoder_samplerate > 192000)
         die("setting encoder_samplerate out of range (8000-192000)");
 
     if (settings_encoder_bitrate > 10000)
@@ -98,7 +98,7 @@ static void check_sanity(void)
     if (settings_encoder_channels < 1 || settings_encoder_channels > 2)
         die("setting encoder_channels out of range (1-2)");
 
-    if (settings_cast_port < 1 || settings_cast_port > 65535) 
+    if (settings_cast_port < 1 || settings_cast_port > 65535)
         die("setting cast_port out of range (1-65535)");
 
     if (settings_remote_port < 1 || settings_remote_port > 65535)
@@ -107,9 +107,9 @@ static void check_sanity(void)
 
 static void settings_free(void)
 {
-    #define FREE_int(key) 
+    #define FREE_int(key)
     #define FREE_str(key) free(settings_##key);
-    #define FREE_log(key) 
+    #define FREE_log(key)
     #define X(type, key, value) FREE_##type(key)
     SETTINGS_LIST
     #undef X

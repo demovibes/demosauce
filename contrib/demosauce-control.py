@@ -5,7 +5,7 @@
 # "THE BEER-WARE LICENSE" (Revision 42):
 # 'maep' on ircnet wrote this file. As long as you retain this notice you
 # can do whatever you want with this stuff. If we meet some day, and you think
-# this stuff is worth it, you can buy me a beer in return 
+# this stuff is worth it, you can buy me a beer in return
 # ----------------------------------------------------------------------------
 
 from __future__ import unicode_literals
@@ -15,7 +15,7 @@ if sys.version_info[0] == 2:
     input = raw_input
 
 help_short= 'enter h for help'
-help_msg = '''commands 
+help_msg = '''commands
     s   skip currenly playing song
     m   update stream metadata
     p   set stream source
@@ -35,7 +35,7 @@ def sendorbust(fd, data):
     except Exception as e:
         print(e)
         exit(1)
-        
+
 
 def mainloop(fd):
     print(help_short)
@@ -43,10 +43,10 @@ def mainloop(fd):
         cmd = prompt()
         if cmd == 'q':
             exit(0)
-            
+
         elif cmd == 'h':
             print(help_msg)
-            
+
         elif cmd == 's':
             sendorbust(fd, 'SKIP')
 
@@ -54,7 +54,7 @@ def mainloop(fd):
             confirm = prompt('you are about to make the music stop, confirm by typing "yes"')
             if confirm == 'yes':
                 sendorbust(fd, 'QUIT')
-            
+
         elif cmd == 'm':
             artist = prompt('enter artist (optional)')
             title = prompt('enter title')
@@ -65,7 +65,7 @@ def mainloop(fd):
             if (artist):
                 command += '\nartist=%s' % artist
             sendorbust(fd, command)
-            
+
         elif cmd == 'p':
             url = prompt('enter url or path of next song to be played')
             gain = prompt('enter track gain in dB (optional)')
@@ -76,10 +76,10 @@ def mainloop(fd):
             if gain:
                 command += '\ngain=%s' % gain
             sendorbust(fd, command)
-            
+
         else:
             print('unknown command,', help_short)
- 
+
 if __name__ == '__main__':
     usage = 'syntax: %prog [options]'
     parser = optparse.OptionParser(usage)

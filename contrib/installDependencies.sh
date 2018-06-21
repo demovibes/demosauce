@@ -15,7 +15,7 @@ fi
 
 # RedHat (and Fedora)
 if [ -f /etc/redhat-release ] ; then
-	yum -y install gcc libsamplerate-devel libshout3-devel libid3tag-devel 
+	yum -y install gcc libsamplerate-devel libshout3-devel libid3tag-devel
 	exit
 fi
 
@@ -35,7 +35,7 @@ fi
 # Gentoo
 # G++ is assumed already installed
 if [ -f /etc/gentoo-release ] ; then
-	emerge -avuDN yasm lame libshout libsamplerate libid3tag 
+	emerge -avuDN yasm lame libshout libsamplerate libid3tag
 	exit
 fi
 

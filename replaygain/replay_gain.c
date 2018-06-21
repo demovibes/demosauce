@@ -27,7 +27,7 @@ struct rg_context* rg_new(int samplerate, int sampletype, int channels, int inte
         return NULL;
 
     struct rg_context* ctx = calloc(sizeof *ctx, 1);
-    
+
     int err = InitGainAnalysis(&ctx->state, samplerate);
     if (err == INIT_GAIN_ANALYSIS_ERROR) {
         free(ctx);

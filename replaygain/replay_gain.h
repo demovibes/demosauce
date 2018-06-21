@@ -25,7 +25,7 @@ struct rg_context;
 struct rg_context*  rg_new(int samplerate, int sampletype, int channels, int interleaved);
 void                rg_free(struct rg_context* ctx);
 
-/* if stereo input is planar (not interleaved) data must point to a 
+/* if stereo input is planar (not interleaved) data must point to a
  * list of two pointers:
  *
  * float* foo[2] = {left, right};

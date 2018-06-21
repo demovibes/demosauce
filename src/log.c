@@ -42,7 +42,7 @@ void log_set_file(const char* file_name, enum log_level level)
         return;
     }
     logfile = fopen(buf, "w");
-    if (!logfile) 
+    if (!logfile)
         puts("WARNING: could not open log file");
 }
 
@@ -72,12 +72,12 @@ void log_log(enum log_level lvl, const char* fmt, ...)
     if (lvl >= file_level && logfile) {
         va_start(args, fmt);
         fvlog(logfile, lvl, fmt, args);
-        va_end(args);        
-    }        
+        va_end(args);
+    }
 
     if (lvl == log_fatal) {
         puts("terminated");
-        if (logfile) 
+        if (logfile)
             fputs("terminated", logfile);
         exit(EXIT_FAILURE);
     }

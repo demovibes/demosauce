@@ -20,18 +20,18 @@
 #include "util.h"
 
 #define MAX_LENGTH      3600     // abort scan if track is too long, in seconds
-#define SAMPLERATE      44100 
+#define SAMPLERATE      44100
 static const char* HELP_MESSAGE =
-    "demosauce scan tool 0.4.0"ID_STR"\n"                                   
-    "syntax: scan [options] file\n"                                         
-    "   -h                      print help\n"                               
-    "   -r                      disable replaygain analysis\n"              
-    "   -o file.wav, stdout     write to wav or stdout\n"                   
-    "                           format is 16 bit, 44.1 khz, stereo\n"       
+    "demosauce scan tool 0.4.0"ID_STR"\n"
+    "syntax: scan [options] file\n"
+    "   -h                      print help\n"
+    "   -r                      disable replaygain analysis\n"
+    "   -o file.wav, stdout     write to wav or stdout\n"
+    "                           format is 16 bit, 44.1 khz, stereo\n"
     "                           stdout is raw data, and has no wav header";
 
 // for some formats avcodec fails to provide a bitrate so I just
-// make an educated guess. if the file contains large amounts of 
+// make an educated guess. if the file contains large amounts of
 // other data besides music, this will be completely wrong.
 static float fake_bitrate(const char* path, float duration)
 {
@@ -61,9 +61,9 @@ static FILE* mwav_open_writer(const char* path, int channels, int samplerate, in
     fwrite("WAVE", 1, 4, f);
     fwrite("fmt ", 1, 4, f);
     mwav_write_int(f, 16, 4);
-    mwav_write_int(f, samplesize == 4 ? 3: 1, 2); 
+    mwav_write_int(f, samplesize == 4 ? 3: 1, 2);
     mwav_write_int(f, channels, 2);
-    mwav_write_int(f, samplerate, 4); 
+    mwav_write_int(f, samplerate, 4);
     mwav_write_int(f, channels * samplerate * samplesize, 4);
     mwav_write_int(f, channels * samplesize, 2);
     mwav_write_int(f, samplesize * 8, 2);
@@ -123,9 +123,9 @@ int main(int argc, char** argv)
     if (!bass_loadso())
         die("failed to load libbass.so");
 #endif
-    if (argc <= 1) 
+    if (argc <= 1)
         die(HELP_MESSAGE);
-    
+
     char c = 0;
     while ((c = getopt(argc, argv, "hro:-:")) != -1) {
         switch (c) {
@@ -162,44 +162,44 @@ int main(int argc, char** argv)
     if (!loaded)
         loaded = ff_load(&decoder, path);
 
-    if (!loaded) 
+    if (!loaded)
         die("unknown format");
-        
+
     decoder.info(&decoder, &info);
 
-    if (info.samplerate <= 0) 
+    if (info.samplerate <= 0)
         die("bad samplerate");
 
-    if (info.channels < 1 || info.channels > 2) 
+    if (info.channels < 1 || info.channels > 2)
         die("bad channel number");
-    
+
     if ((analyze || output) && info.samplerate != SAMPLERATE) {
         resampler = fx_resample_init(info.channels, info.samplerate, SAMPLERATE);
         if (!resampler)
-            die("failed to init resampler");      
-        stream = &stream1; 
+            die("failed to init resampler");
+        stream = &stream1;
     }
 
     struct rg_context* ctx = rg_new(SAMPLERATE, RG_FLOAT32, info.channels, false);
 
-    // avcodec is unreliable when it comes to length, so the only way to be 
+    // avcodec is unreliable when it comes to length, so the only way to be
     // absolutely accurate is to decode the whole stream
     long frames = 0;
     if (analyze || output || (info.flags & INFO_FFMPEG)) {
         while (!stream->end_of_stream) {
             decoder.decode(&decoder, &stream0, SAMPLERATE);
             frames += stream0.frames;
-            if (frames > MAX_LENGTH * info.samplerate) 
+            if (frames > MAX_LENGTH * info.samplerate)
                 die("exceeded maxium length");
 
             if (resampler)
                 fx_resample(resampler, &stream0, &stream1);
-                
+
             // there is a strange bug in the replaygain code that can cause it to report the wrong
             // value if the input buffer has an odd lenght, until the root of the cause is found,
             // this will have to do :(
             float* buff[2] = {stream->buffer[0], stream->buffer[1]};
-            if (analyze) 
+            if (analyze)
                 rg_analyze(ctx, buff, stream->frames & -2);
 
             if (output)
@@ -216,17 +216,17 @@ int main(int argc, char** argv)
     str = decoder.metadata(&decoder, "artist");
     if (str)
         printf("artist:%s\n", str);
-        
+
     str = decoder.metadata(&decoder, "title");
     if (str)
         printf("title:%s\n", str);
-        
+
     printf("type:%s\n", info.codec);
-    
+
     // ffmpeg's length is not reliable
     float duration = (float)((info.flags & INFO_FFMPEG) ? frames : info.frames) / info.samplerate;
     printf("length:%f\n", duration);
-    
+
     if (analyze)
         printf("replaygain:%f\n", rg_title_gain(ctx));
 
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 
     if (!(info.flags & INFO_MOD))
         printf("samplerate:%d\n", info.samplerate);
-    
+
     return EXIT_SUCCESS;
 }
 

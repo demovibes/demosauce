@@ -39,7 +39,7 @@ enum remote_commands {
     COMMAND_PLAY,
     COMMAND_META,
     COMMAND_QUIT
-};                        
+};
 
 static lame_t           lame;
 static shout_t*         shout;
@@ -52,7 +52,7 @@ static struct info      info;
 static struct decoder   decoder;
 static struct fx_fade   fader;
 static struct fx_mix    mixer;
-static void*            resampler;             
+static void*            resampler;
 static float            gain;
 static long             remaining_frames;
 static bool             mixer_enabled;
@@ -123,7 +123,7 @@ static void configure_effects(const char* config, float forced_length)
     gain = db_to_amp(gain);
 
     // fade out
-    fader_enabled = keyval_bool(config, "fade_out", false); 
+    fader_enabled = keyval_bool(config, "fade_out", false);
     if (fader_enabled) {
         float length = forced_length > 0 ? forced_length : (info.frames / info.samplerate);
         long start = MAX(0, (length - FADE_TIME)) * settings_encoder_samplerate;
@@ -232,7 +232,7 @@ static void* load_next(void* data)
         decoder.free(&decoder);
     memset(&decoder, 0, sizeof(struct decoder));
     memset(&info, 0, sizeof(struct info));
-    
+
     while (tries++ < LOAD_TRIES && !loaded) {
         get_next_song();
         keyval_str(path, sizeof(path), config_buf.data, "path", "");
@@ -253,7 +253,7 @@ static void* load_next(void* data)
             LOG_WARN("[cast] no length '%s'", path);
         forced_length = keyval_real(config_buf.data, "length", 0);
 #ifdef ENABLE_BASS
-        if ((info.flags & INFO_BASS) && forced_length > info.frames / info.samplerate) 
+        if ((info.flags & INFO_BASS) && forced_length > info.frames / info.samplerate)
             bass_set_loop_duration(&decoder, forced_length);
 #endif
     } else {
@@ -326,7 +326,7 @@ static bool cast_connect(void)
     char channels[4]    = {0};
     snprintf(bitrate, sizeof(bitrate), "%d", settings_encoder_bitrate);
     snprintf(samplerate, sizeof(samplerate), "%d", settings_encoder_samplerate);
-    snprintf(channels, sizeof(channels), "%d", settings_encoder_channels); 
+    snprintf(channels, sizeof(channels), "%d", settings_encoder_channels);
 
     // setup connection
     shout_set_host(shout, settings_cast_host);
@@ -346,7 +346,7 @@ static bool cast_connect(void)
 
     // start
     int err = shout_open(shout);
-    if (err != SHOUTERR_SUCCESS) 
+    if (err != SHOUTERR_SUCCESS)
         LOG_ERROR("[cast] can't connect to icecast (%s)", shout_get_error(shout));
     else
         LOG_INFO("[cast] connected to icecast");
@@ -366,7 +366,7 @@ static void main_loop(void)
         } else {
             s = process(decode_frames);
             remaining_frames -= s->frames;
-            if (s->end_of_stream || remaining_frames < 0) { 
+            if (s->end_of_stream || remaining_frames < 0) {
                 LOG_DEBUG("[cast] end of stream");
                 decoder_ready = false;
                 pthread_t thread = {0};
@@ -374,9 +374,9 @@ static void main_loop(void)
                 pthread_detach(thread);
             }
         }
-        
+
         int siz = lame_encode_buffer_ieee_float(lame, s->buffer[0], s->buffer[1], s->frames, lame_buf.data, lame_buf.size);
-        if (siz < 0) { 
+        if (siz < 0) {
            LOG_ERROR("[cast] lame error (%d)", siz);
            return;
         }
@@ -405,6 +405,6 @@ void cast_run(void)
             main_loop();
         }
         cast_free();
-        sleep(RETRY_TIME); 
+        sleep(RETRY_TIME);
     }
 }

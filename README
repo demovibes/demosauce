@@ -24,7 +24,7 @@ you will need to install the required libraries manually.
 
 BSD
 ------------------
-on freebsd installDependencies.sh should work 
+on freebsd installDependencies.sh should work
 
 Windows
 ------------------
@@ -32,13 +32,13 @@ lol
 
 SETUP
 ==================
-copy contrib/demosauce.conf.example to demosauce.conf. then edit it. the comments will guide you.  
+copy contrib/demosauce.conf.example to demosauce.conf. then edit it. the comments will guide you.
 
 RUN
 ==================
-you can either run demosauce with a full demovibes server (which demosauce was written for) or provide your own script. that script will listen on a certain port for a command (NEXTSONG) upon which it will return information about the next song to be played. the format is a couple of key-value pairs. if you're using demosauce with demovibes, just run the sockulf.py script in the demobibes directory.  
-for a simple custom example script, check contrib/simple-sockulf.py. it will play all playable files in a given directory in a random order. you can use that script as the basis for you own solution. you probably only have to change the djDerp class. 
-to control demosauce while it's running, use contrib/demosauce-control.py. 
+you can either run demosauce with a full demovibes server (which demosauce was written for) or provide your own script. that script will listen on a certain port for a command (NEXTSONG) upon which it will return information about the next song to be played. the format is a couple of key-value pairs. if you're using demosauce with demovibes, just run the sockulf.py script in the demobibes directory.
+for a simple custom example script, check contrib/simple-sockulf.py. it will play all playable files in a given directory in a random order. you can use that script as the basis for you own solution. you probably only have to change the djDerp class.
+to control demosauce while it's running, use contrib/demosauce-control.py.
 
 LICENSE
 ==================

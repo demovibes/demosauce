@@ -10,11 +10,11 @@ LINK_SCAN = -lm $(shell pkg-config --libs samplerate) $(LINK_FFMPEG) $(LINK_BASS
 # If you build the binary just once this if of no concern. If you recompile often install ccache.
 all: clean demosauce scan
 	rm -f *.o
-	
+
 demosauce: $(INPUT_DEMOSAUCE)
 	$(CC) $(LDFLAGS) $(INPUT_DEMOSAUCE) $(LINK_DEMOSAUCE) -o demosauce
 
-scan: $(INPUT_SCAN) 
+scan: $(INPUT_SCAN)
 	$(CC) $(LDFLAGS) $(INPUT_SCAN) $(LINK_SCAN) -o scan
 
 %.o: src/%.c

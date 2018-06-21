@@ -13,16 +13,16 @@
 
 #include <stddef.h>
 #include <stdbool.h>
- 
+
 #define MAX_CHANNELS    2
 
 #define INFO_SEEKABLE   1
 #define INFO_FFMPEG     (1 << 1)
-#define INFO_BASS       (1 << 2)  
+#define INFO_BASS       (1 << 2)
 #define INFO_MOD        (1 << 16)
 #define INFO_AMIGAMOD   (1 << 17)
 
-#define BOOL_STR(x)     ((x) ? "true" : "false") 
+#define BOOL_STR(x)     ((x) ? "true" : "false")
 #define XSTR_(s)        "-"#s
 #define XSTR(s)         XSTR_(s)
 #ifdef BUILD_ID
@@ -38,7 +38,7 @@
 #define CLAMP(a, b, c)  ((b) < (a) ? (a) : (b) > (c) ? (c) : (b))
 
 enum sampleformat {                 // planar formats must have odd number
-    SF_INT16I       = 0,            // interleaved 16 bit int    
+    SF_INT16I       = 0,            // interleaved 16 bit int
     SF_INT16P       = 1,            // planar 16 bit int
     SF_FLOAT32I     = 2,            // interleaved 32 bit float
     SF_FLOAT32P     = 3             // planar 32 bit float
@@ -93,7 +93,7 @@ struct decoder {
 };
 
 
-// equivalent to stdlib functions, but memory is aligned to 32 byte boundry. 
+// equivalent to stdlib functions, but memory is aligned to 32 byte boundry.
 void*   util_malloc(size_t size);
 void*   util_realloc(void* ptr, size_t size);
 
@@ -108,7 +108,7 @@ void*   util_realloc(void* ptr, size_t size);
  *      returns size of <path> in bytes
  */
 char*   util_strdup(const char* str);
-char*   util_trim(char* str);          
+char*   util_trim(char* str);
 bool    util_isfile(const char* path);
 long    util_filesize(const char* path);
 
@@ -122,7 +122,7 @@ long    util_filesize(const char* path);
  *  socekt_read
  *      reads data into <socket>. <buffer> will be resized if more space is needed.
  *      <buffer>.size is set to the number of read bytes. returns true on success.
- */ 
+ */
 int     socket_connect(const char* host, int port);
 int     socket_listen(int port, bool local);
 bool    socket_write(int socket, const void* buffer, long size);
@@ -137,14 +137,14 @@ void    socket_close(int socket);
  *      big, <outbuf> will be an emty string. <fallback> may be NULL.
  *  keyval_str_dup
  *      same as keyval_str, but the value and the fallback are put into a newly allocated
- *      string that must be freed with util_free.    
+ *      string that must be freed with util_free.
  */
 void    keyval_str(char* outbuf, int outsize, const char* str, const char* key, const char* fallback);
 char*   keyval_str_dup(const char* str, const char* key, const char* fallback);
 long    keyval_int(const char* str, const char* key, long fallback);
 double  keyval_real(const char* str, const char* key, double fallback);
 bool    keyval_bool(const char* str, const char* key, bool fallback);
-    
+
 
 /*  buffer_resize
  *      resize <b> to hold at least <size> bytes. if buffer is already large enough

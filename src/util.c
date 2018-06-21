@@ -33,7 +33,7 @@ void* util_malloc(size_t size)
     void* ptr = NULL;
     int err = posix_memalign(&ptr, MEM_ALIGN, size);
     return err ? NULL : ptr;
-}    
+}
 
 void* util_realloc(void* ptr, size_t size)
 {
@@ -116,7 +116,7 @@ static char* keyval_impl(char* out, int size, const char* heap, const char* key,
             continue;
         }
         tmp += strlen(key);
-        tmp += strspn(tmp, " \t");                  // skip space after key 
+        tmp += strspn(tmp, " \t");                  // skip space after key
         if (!*tmp || *tmp != '=') {                 // check for =
             tmp = skip_line(tmp);
             continue;
@@ -141,7 +141,7 @@ static char* keyval_impl(char* out, int size, const char* heap, const char* key,
         }
     }
 
-    LOG_DEBUG("[keyval] '%s' = '%s' (fallback)", key, fallback);    
+    LOG_DEBUG("[keyval] '%s' = '%s' (fallback)", key, fallback);
     if (!out && fallback) {
         return util_strdup(fallback);
     } else if (out && fallback && strlen(fallback) < size) {
@@ -181,7 +181,7 @@ double keyval_real(const char* heap, const char* key, double fallback)
     double val = strtod(tmp, &str_end);
     return str_end != tmp ? val : fallback;
 }
-  
+
 bool keyval_bool(const char* heap, const char* key, bool fallback)
 {
     char tmp[8] = {0};
@@ -197,7 +197,7 @@ int socket_connect(const char* host, int port)
     char                portstr[8]  = {0};
     struct addrinfo*    info        = NULL;
     struct addrinfo     hints       = {0};
-    
+
     LOG_DEBUG("[socket] connecting to %s:%d", host, port);
     if (snprintf(portstr, sizeof(portstr), "%d", port) < 0)
         goto error;
@@ -233,21 +233,21 @@ int socket_listen(int port, bool local)
     char                portstr[8]  = {0};
     struct addrinfo*    info        = NULL;
     struct addrinfo     hints       = {0};
-    
+
     LOG_DEBUG("[socket] listening on %d", port);
     if (snprintf(portstr, sizeof(portstr), "%d", port) < 0)
         goto error;
 
     hints.ai_family     = AF_UNSPEC;
     hints.ai_socktype   = SOCK_STREAM;
-    hints.ai_flags      = AI_PASSIVE; 
+    hints.ai_flags      = AI_PASSIVE;
     if (getaddrinfo(local ? "localhost" : NULL, portstr, &hints, &info) != 0)
         goto error;
 
     for (struct addrinfo* ai = info; ai; ai = ai->ai_next) {
         fd0 = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
         if (fd0 < 0)
-            goto error; 
+            goto error;
         if (bind(fd0, ai->ai_addr, ai->ai_addrlen) == 0)
             break;
         close(fd0);
@@ -258,7 +258,7 @@ int socket_listen(int port, bool local)
     fd1 = accept(fd0, NULL, NULL);
     if (fd1 < 0)
         goto error;
-    
+
     freeaddrinfo(info);
     close(fd0);
     return fd1;
@@ -316,7 +316,7 @@ void buffer_zero(struct buffer* buf)
     memset(buf->data, 0, buf->size);
 }
 
-void buffer_resize(struct buffer* buf, long size) 
+void buffer_resize(struct buffer* buf, long size)
 {
     buf->size = MAX(0, size);
     if (buf->max_size < buf->size) {

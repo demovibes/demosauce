@@ -30,14 +30,14 @@ for line in open(sys.argv[1]):
     if not tok or tok[0] != '@' or len(tok) < 4:
         print('skipping "%s"' % line[:-1])
         continue
-        
+
     call = intern(tok[1])
     mode = tok[2]
     addr = int(tok[3], 16)
     size = int(tok[-1], 16)
 
     if mode in ['+', '>']:
-        memmap[addr] = (call, size) 
+        memmap[addr] = (call, size)
     elif mode in ['-', '<'] and addr in memmap:
         del memmap[addr]
     else:

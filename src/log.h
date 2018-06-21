@@ -46,10 +46,10 @@ enum log_level {
     #define LOG_DEBUG(...)
 #endif
 
-#define LOG_INFO(...) log_log(log_info, __VA_ARGS__) 
-#define LOG_WARN(...) log_log(log_warn, __VA_ARGS__) 
-#define LOG_ERROR(...) log_log(log_error, __VA_ARGS__) 
-#define LOG_FATAL(...) log_log(log_fatal, __VA_ARGS__) 
+#define LOG_INFO(...) log_log(log_info, __VA_ARGS__)
+#define LOG_WARN(...) log_log(log_warn, __VA_ARGS__)
+#define LOG_ERROR(...) log_log(log_error, __VA_ARGS__)
+#define LOG_FATAL(...) log_log(log_fatal, __VA_ARGS__)
 
 void log_log(enum log_level level, const char* fmt, ...);
 void log_set_console_level(enum log_level level);

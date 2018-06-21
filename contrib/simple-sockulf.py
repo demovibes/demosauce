@@ -6,7 +6,7 @@
 # "THE BEER-WARE LICENSE" (Revision 42):
 # 'maep' on ircnet wrote this file. As long as you retain this notice you
 # can do whatever you want with this stuff. If we meet some day, and you think
-# this stuff is worth it, you can buy me a beer in return 
+# this stuff is worth it, you can buy me a beer in return
 # ----------------------------------------------------------------------------
 
 from __future__ import print_function
@@ -32,7 +32,7 @@ def scan(path):
     gain = gv(output, r'replaygain:(-?\d*\.?\d+)')
     print(path, artist, title, gain, "dB")
     return (True, title, artist, gain)
-    
+
 # a very simple database
 class songDb(object):
     def __init__(self, path):
@@ -44,7 +44,7 @@ class songDb(object):
 
     def save(self):
         pickle.dump(self.dict, open(self.file, 'wb'), 2)
-    
+
     def add(self, path):
         if not path in self.dict:
             self.dict[path] = scan(path)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         parser.error('you must specify a path')
 
     signal.signal(signal.SIGINT, signal_handler)
-    
+
     HOST = options.ip
     PORT = int(options.port)
     TIMEOUT = None

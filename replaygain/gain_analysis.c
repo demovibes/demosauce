@@ -1,7 +1,7 @@
 /*
  *  ReplayGainAnalysis - analyzes input samples and give the recommended dB change
  *  Copyright (C) 2001-2009 David Robinson and Glen Sawyer
- *  Improvements and optimizations added by Frank Klemm, and by Marcel Müller 
+ *  Improvements and optimizations added by Frank Klemm, and by Marcel Müller
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -107,17 +107,17 @@
 
 #define linprebuf   (ctx->linprebuf)
 #define linpre      (ctx->linpre)
-#define lstepbuf    (ctx->lstepbuf) 
+#define lstepbuf    (ctx->lstepbuf)
 #define lstep       (ctx->lstep)
 #define loutbuf     (ctx->loutbuf)
 #define lout        (ctx->lout)
 #define rinprebuf   (ctx->rinprebuf)
-#define rinpre      (ctx->rinpre)                    
+#define rinpre      (ctx->rinpre)
 #define rstepbuf    (ctx->rstepbuf)
 #define rstep       (ctx->rstep)
 #define routbuf     (ctx->routbuf)
 #define rout        (ctx->rout)
-#define sampleWindow (ctx->sampleWindow)            
+#define sampleWindow (ctx->sampleWindow)
 #define totsamp     (ctx->totsamp)
 #define lsum        (ctx->lsum)
 #define rsum        (ctx->rsum)
@@ -211,9 +211,9 @@ filterYule (const Float_t* input, Float_t* output, size_t nSamples, const Float_
 
 static void
 filterButter ( const Float_t* input, Float_t* output, size_t nSamples, const Float_t* kernel)
-{   
+{
     while (nSamples--) {
-        *output =  
+        *output =
            input [0]  * kernel[0]
          - output[-1] * kernel[1]
          + input [-1] * kernel[2]

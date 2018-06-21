@@ -32,7 +32,7 @@
 #include "effects.h"
 #include "ffdecoder.h"
 
-#ifndef AV_VERSION_INT 
+#ifndef AV_VERSION_INT
     #define AV_VERSION_INT(a, b, c) (a << 16 | b << 8 | c)
 #endif
 
@@ -75,7 +75,7 @@ static void decode_frame(struct ffdecoder* d, AVPacket* p)
 {
     void* packet_data = p->data;
     int   packet_size = p->size;
-    
+
     while (p->size > 0) {
         int ret = 0;
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53, 25, 0)
@@ -106,7 +106,7 @@ static void decode_frame(struct ffdecoder* d, AVPacket* p)
         p->size -= ret;
     }
 
-error:    
+error:
     p->data = packet_data;
     p->size = packet_size;
 }
@@ -114,27 +114,27 @@ error:
 static void ff_decode(struct decoder* dec, struct stream* s, int frames)
 {
     struct ffdecoder* d = dec->handle;
-    
+
     // preallocate stream to avoid a bunch of incremental resizes
     stream_resize(&d->stream, frames * 2, d->codec_context->channels);
-    
+
     while (d->stream.frames < frames) {
         AVPacket packet = {0};
         int err = av_read_frame(d->format_context, &packet);
         if (err < 0) {
             d->stream.end_of_stream = true;
-            break; 
+            break;
         }
-        if (packet.stream_index == d->stream_index) 
+        if (packet.stream_index == d->stream_index)
             decode_frame(d, &packet);
         av_free_packet(&packet);
     }
-   
+
     s->frames = 0;
     stream_append(s, &d->stream, frames);
     stream_drop(&d->stream, frames);
     s->end_of_stream = !d->stream.frames && d->stream.end_of_stream;
-    if (s->end_of_stream) 
+    if (s->end_of_stream)
         LOG_DEBUG("[ffdecoder] eos avcodec %d frames left", s->frames);
 }
 
@@ -161,9 +161,9 @@ static const char* codec_type(struct ffdecoder* d)
     /* This is the older version */
     enum CodecID codec_type = d->codec->id;
 
-    if (codec_type >= CODEC_ID_PCM_S16LE && codec_type < CODEC_ID_ADPCM_IMA_QT) 
+    if (codec_type >= CODEC_ID_PCM_S16LE && codec_type < CODEC_ID_ADPCM_IMA_QT)
         return "pcm";
-    if (codec_type >= CODEC_ID_ADPCM_IMA_QT && codec_type < CODEC_ID_AMR_NB) 
+    if (codec_type >= CODEC_ID_ADPCM_IMA_QT && codec_type < CODEC_ID_AMR_NB)
         return "adpcm";
     switch (codec_type) {
         case CODEC_ID_RA_144:
@@ -176,7 +176,7 @@ static const char* codec_type(struct ffdecoder* d)
 #if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(51, 50, 0)
         case CODEC_ID_WMAVOICE:
         case CODEC_ID_WMAPRO:
-        case CODEC_ID_WMALOSSLESS: 
+        case CODEC_ID_WMALOSSLESS:
 #endif
         case CODEC_ID_WMAV1:
         case CODEC_ID_WMAV2:    return "wma";
@@ -197,9 +197,9 @@ static const char* codec_type(struct ffdecoder* d)
     /* This is the newer version */
     enum AVCodecID codec_type = d->codec->id;
 
-    if (codec_type >= AV_CODEC_ID_PCM_S16LE && codec_type < AV_CODEC_ID_ADPCM_IMA_QT) 
+    if (codec_type >= AV_CODEC_ID_PCM_S16LE && codec_type < AV_CODEC_ID_ADPCM_IMA_QT)
         return "pcm";
-    if (codec_type >= AV_CODEC_ID_ADPCM_IMA_QT && codec_type < AV_CODEC_ID_AMR_NB) 
+    if (codec_type >= AV_CODEC_ID_ADPCM_IMA_QT && codec_type < AV_CODEC_ID_AMR_NB)
         return "adpcm";
     switch (codec_type) {
         case AV_CODEC_ID_RA_144:
@@ -211,7 +211,7 @@ static const char* codec_type(struct ffdecoder* d)
         case AV_CODEC_ID_VORBIS:   return "vorbis";
         case AV_CODEC_ID_WMAVOICE:
         case AV_CODEC_ID_WMAPRO:
-        case AV_CODEC_ID_WMALOSSLESS: 
+        case AV_CODEC_ID_WMALOSSLESS:
         case AV_CODEC_ID_WMAV1:
         case AV_CODEC_ID_WMAV2:    return "wma";
         case AV_CODEC_ID_FLAC:     return "flac";
@@ -296,7 +296,7 @@ bool ff_load(struct decoder* dec, const char* path)
     }
 
     LOG_DEBUG("[ffdecoder] loading %s", path);
-    
+
     int err = 0;
     struct ffdecoder d = {0};
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(52, 111, 0)
@@ -304,14 +304,14 @@ bool ff_load(struct decoder* dec, const char* path)
 #else
     err = avformat_open_input(&d.format_context, path, 0, 0);
 #endif
-    if (err) 
+    if (err)
         goto error;
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53, 6, 0)
     err = av_find_stream_info(d.format_context);
 #else
     err = avformat_find_stream_info(d.format_context, NULL);
 #endif
-    if (err < 0) 
+    if (err < 0)
         goto error;
 
     for (unsigned i = 0; i < d.format_context->nb_streams; i++) {
@@ -328,7 +328,7 @@ bool ff_load(struct decoder* dec, const char* path)
 
     d.codec_context = d.format_context->streams[d.stream_index]->codec;
     d.codec = avcodec_find_decoder(d.codec_context->codec_id);
-    if (!d.codec) 
+    if (!d.codec)
         goto error;
 
     d.format = get_format(d.codec_context);
@@ -341,14 +341,14 @@ bool ff_load(struct decoder* dec, const char* path)
     if (avcodec_open2(d.codec_context, d.codec, NULL) < 0)
 #endif
         goto error;
-    
-    if (d.format_context->duration > 0) 
+
+    if (d.format_context->duration > 0)
         d.frames = d.format_context->duration * d.codec_context->sample_rate / AV_TIME_BASE;
-    
+
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53, 25, 0)
     buffer_resize(&d.buffer, BUFFER_SIZE);
 #endif
-    
+
     dec->free       = ff_free;
     dec->seek       = ff_seek;
     dec->info       = ff_info;
@@ -356,7 +356,7 @@ bool ff_load(struct decoder* dec, const char* path)
     dec->decode     = ff_decode;
     dec->handle     = calloc(1, sizeof (struct ffdecoder));
     memmove(dec->handle, &d, sizeof (struct ffdecoder));
-    
+
     LOG_INFO("[ffdecoder] loaded %s", path);
     return true;
 
@@ -368,15 +368,15 @@ error:
 
 bool ff_probe_name(const char* file_name)
 {
-    const char* ext[] = {".mp3", ".ogg", ".mp4", ".m4a" ".aac", ".wma", ".acc", ".flac", 
+    const char* ext[] = {".mp3", ".ogg", ".mp4", ".m4a" ".aac", ".wma", ".acc", ".flac",
         ".ac3", ".wav", ".ape", ".wv", ".mpc", ".mp+", ".mpp", ".ra", ".mp2"
 #if LIBAVCODEC_VERSION_INT > AV_VERSION_INT(54, 24, 0)
         , ".opus"
 #endif
-    }; 
+    };
     for (int i = 0; i < COUNT(ext); i++) {
         const char* tmp = strrchr(file_name, '.');
-        if (tmp && !strcasecmp(tmp, ext[i])) 
+        if (tmp && !strcasecmp(tmp, ext[i]))
             return true;
     }
     return false;

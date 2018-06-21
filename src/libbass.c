@@ -8,7 +8,7 @@
 *   copyright MMXIII by maep
 *
 *   this file handles dynamic linking to libbass.so_POSIX_C_SOURCE >= 200112L
-*   it was nessessary because the system's dynamic 
+*   it was nessessary because the system's dynamic
 *   linking isn't flexible enough
 */
 
@@ -21,16 +21,16 @@
 #include <bass.h>
 #include "util.h"
 
-// I had a lot of preprocessor hackery here to detect void functions. 
+// I had a lot of preprocessor hackery here to detect void functions.
 // it almost worked but void* made a mess of things :(
-// instead I added an extra column that holds the number of arguments, 
+// instead I added an extra column that holds the number of arguments,
 // or 'V' for a void function. more verbose, but much cleaner to implement
 
 #define JOIN(a,b)           JOIN2(a,b)
 #define JOIN2(a,b)          a##b
 
 #define ARG_V(type)         type
-#define ARG_0()             
+#define ARG_0()
 #define ARG_1(type)         type a1
 #define ARG_2(type,...)     type a2,ARG_1(__VA_ARGS__)
 #define ARG_3(type,...)     type a3,ARG_2(__VA_ARGS__)
@@ -90,7 +90,7 @@ static bool load(const char* file)
     if (!handle)
         return false;
     atexit(unload);
-    
+
     #define X(ret,name,agrs,...) name=(ret(*)(__VA_ARGS__))bind("BASS_"#name);
     FUNCTION_DEFS
     #undef X

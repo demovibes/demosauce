@@ -13,7 +13,7 @@
 
 #include "util.h"
 
-bool    bass_loadso(void); 
+bool    bass_loadso(void);
 bool    bass_probe(const char* path);
 bool    bass_load(struct decoder* dec, const char* path, const char* options, int samplerate);
 void    bass_set_loop_duration(struct decoder* dec, double duration);

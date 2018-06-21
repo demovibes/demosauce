@@ -73,7 +73,7 @@ void fx_resample(void* handle, struct stream* s1, struct stream* s2)
 {
     struct fx_resampler* r = handle;
     // TODO deal with leftover internal samples
-    s2->end_of_stream = s1->end_of_stream; 
+    s2->end_of_stream = s1->end_of_stream;
     stream_resize(s2, s1->frames * r->ratio + 1, s1->channels);
     for (int ch = 0; ch < r->channels; ch++) {
         SRC_DATA src = {
@@ -107,7 +107,7 @@ void fx_map(struct stream* s, int channels)
         s->channels = 1;
         float* left = s->buffer[0];
         float* right = s->buffer[1];
-        for (int i = 0; i < s->frames; i++) 
+        for (int i = 0; i < s->frames; i++)
             left[i] = (left[i] + right[i]) / 2;
     }
 }
@@ -116,7 +116,7 @@ void fx_map(struct stream* s, int channels)
 
 void fx_fade_init(struct fx_fade* fx, long start_frame, long end_frame, float begin_amp, float end_amp)
 {
-    if (start_frame >= end_frame || begin_amp < 0 || end_amp < 0) 
+    if (start_frame >= end_frame || begin_amp < 0 || end_amp < 0)
         return;
     fx->start_frame = start_frame;
     fx->end_frame   = end_frame;
@@ -132,16 +132,16 @@ void fx_fade(struct fx_fade* fx, struct stream* s)
     long endb = (fx->end_frame < fx->current_frame) ? 0 :
         MIN(s->frames, fx->end_frame - fx->current_frame);
     fx->current_frame += s->frames;
-    if (fx->amp == 1 && (enda >= s->frames || endb == 0)) 
+    if (fx->amp == 1 && (enda >= s->frames || endb == 0))
         return; // nothing to do; amp mignt not be exacly on target, so proximity check would be better
     float a = fx->amp;
     for (int ch = 0; ch < s->channels; ch++) {
         float* out = s->buffer[ch];
-        for (int i = 0; i < enda; i++) 
+        for (int i = 0; i < enda; i++)
             out[i] *= a;
-        for (int i = 0; i < endb; i++, a += fx->amp_inc) 
+        for (int i = 0; i < endb; i++, a += fx->amp_inc)
             out[i] *= a;
-        for (int i = 0; i < s->frames; i++) 
+        for (int i = 0; i < s->frames; i++)
             *out++ *= a;
     }
     fx->amp += fx->amp_inc * (endb - enda);
@@ -153,7 +153,7 @@ void fx_gain(struct stream* s, float amp)
 {
     for (int ch = 0; ch < s->channels; ch++) {
         float* out = s->buffer[ch];
-        for (int i = 0; i < s->frames; i++) 
+        for (int i = 0; i < s->frames; i++)
             out[i] *= amp;
     }
 }
@@ -197,10 +197,10 @@ void fx_clip(struct stream* s)
 
 static void ci16i(const void** vin, float** out, int len, int channels)
 {
-    const int16_t* in = vin[0]; 
+    const int16_t* in = vin[0];
     float* lout = out[0];
     if (channels == 1) {
-        for (int i = 0; i < len; i++) 
+        for (int i = 0; i < len; i++)
             lout[i] = (float)in[i] / -INT16_MIN;
     } else { // channels == 2
         float* rout = out[1];
@@ -216,7 +216,7 @@ static void ci16p(const void** vin, float** out, int len, int channels)
     for (int ch = 0; ch < channels; ch++) {
         const int16_t* in = vin[ch];
         float* lout = out[ch];
-        for (int i = 0; i < len; i++) 
+        for (int i = 0; i < len; i++)
             lout[i] = (float)in[i] / -INT16_MIN;
     }
 }
@@ -238,16 +238,16 @@ static void cf32i(const void** vin, float** out, int len, int channels)
 
 static void cf32p(const void** vin, float** out, int len, int channels)
 {
-    for (int ch = 0; ch < channels; ch++) 
+    for (int ch = 0; ch < channels; ch++)
         memmove(out[ch], vin[ch], len * sizeof(float));
 }
 
-static void (*convert[])(const void**, float**, int, int) = {ci16i, ci16p, cf32i, cf32p}; 
+static void (*convert[])(const void**, float**, int, int) = {ci16i, ci16p, cf32i, cf32p};
 
 void fx_convert_to_float(void** in, float** out, int type, int size, int channels)
 {
     // some converter functions only support 2, not MAX_CHANNELS
-    assert(channels >= 1 && channels <= 2); 
+    assert(channels >= 1 && channels <= 2);
     assert(type >= SF_INT16I && type <= SF_FLOAT32P);
     convert[type]((const void**)in, out, size, channels);
 }
