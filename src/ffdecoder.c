@@ -149,11 +149,18 @@ static void ff_seek(struct decoder* dec, long frame)
 
 static const char* codec_type(struct ffdecoder* d)
 {
+
+/* At some point in ffmpeg development, avcodec.h switched to
+  prefix these CODEC_ID_XYZ enum entries with AV_.
+
+  Use a big ifdef to determine which version of this function to use.
+*/
+
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54, 25, 0)
+
+    /* This is the older version */
     enum CodecID codec_type = d->codec->id;
-#else
-    enum AVCodecID codec_type = d->codec->id;
-#endif
+
     if (codec_type >= CODEC_ID_PCM_S16LE && codec_type < CODEC_ID_ADPCM_IMA_QT) 
         return "pcm";
     if (codec_type >= CODEC_ID_ADPCM_IMA_QT && codec_type < CODEC_ID_AMR_NB) 
@@ -184,6 +191,39 @@ static const char* codec_type(struct ffdecoder* d)
 #endif
         default:                return "unknown";
     }
+
+#else
+
+    /* This is the newer version */
+    enum AVCodecID codec_type = d->codec->id;
+
+    if (codec_type >= AV_CODEC_ID_PCM_S16LE && codec_type < AV_CODEC_ID_ADPCM_IMA_QT) 
+        return "pcm";
+    if (codec_type >= AV_CODEC_ID_ADPCM_IMA_QT && codec_type < AV_CODEC_ID_AMR_NB) 
+        return "adpcm";
+    switch (codec_type) {
+        case AV_CODEC_ID_RA_144:
+        case AV_CODEC_ID_RA_288:   return "real";
+        case AV_CODEC_ID_MP2:      return "mp2";
+        case AV_CODEC_ID_MP3:      return "mp3";
+        case AV_CODEC_ID_AAC:      return "aac";
+        case AV_CODEC_ID_AC3:      return "ac3";
+        case AV_CODEC_ID_VORBIS:   return "vorbis";
+        case AV_CODEC_ID_WMAVOICE:
+        case AV_CODEC_ID_WMAPRO:
+        case AV_CODEC_ID_WMALOSSLESS: 
+        case AV_CODEC_ID_WMAV1:
+        case AV_CODEC_ID_WMAV2:    return "wma";
+        case AV_CODEC_ID_FLAC:     return "flac";
+        case AV_CODEC_ID_ALAC:     return "alac";
+        case AV_CODEC_ID_WAVPACK:  return "wavpack";
+        case AV_CODEC_ID_APE:      return "monkey";
+        case AV_CODEC_ID_MUSEPACK7:
+        case AV_CODEC_ID_MUSEPACK8:return "musepack";
+        case AV_CODEC_ID_OPUS:     return "opus";
+        default:                   return "unknown";
+    }
+#endif
 }
 
 static void ff_info(struct decoder* dec, struct info* info)
